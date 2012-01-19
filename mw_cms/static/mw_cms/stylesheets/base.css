@@ -1,0 +1,16 @@
+body{margin:0;background:transparent;text-align:left;font-size:14px;}
+
+#navigation {/*background:#ffd683;*/color:#444;}
+.voce-menu{text-decoration:none;/*border-bottom:#444 thin solid;*/display:block;color:#fff;padding-left:3px;text-shadow:#444 1px 1px 0;z-index:1;}
+#navigation .titolo-menu{font-weight:bold;}
+#navigation .selected{text-decoration:underline;background-color:transparent;font-weight:bold;}
+#topnav{position: absolute;right:10px;top:10px;text-align:right;margin-right:20px;color: #AAA;}
+#navigation ul li{list-style-type:none;}
+.titolo{color:#fb8b00;text-shadow:#444 1px 1px 0;}
+#ft {text-align:center;padding: 10px 20px; color:#666; background:transparent; border-top: 5px #efefef solid; min-height:70px;text-shadow:#fff 1px 1px 0;}
+
+/* reverts default for jquery */
+.treeview .hover{color:#fff;}
+
+.treeview{font-weight:bold;margin-bottom:10px;border:thick outset;padding:10px 0;overflow-x:auto;overflow-y:show;}
+.tree-descendants{font-weight:normal;}

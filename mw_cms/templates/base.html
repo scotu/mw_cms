@@ -1,0 +1,124 @@
+{% load mptt_tags %}
+{% load treepages_tags %}
+{% load analytics %}
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+        <title>{% block head_title %}Name{% endblock head_title %}</title>
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <!-- Set the viewport width to device width for mobile -->
+        <meta name="viewport" content="width=device-width">
+        <!-- Included CSS Files -->
+        <link rel="stylesheet" href="{{STATIC_URL}}mw_cms/stylesheets/foundation/foundation.css" />
+        
+        <!--[if lt IE 9]>
+            <link rel="stylesheet" href="{{ site.common_static_url }}stylesheets/foundation/ie.css">
+        <![endif]-->
+        <!-- IE Fix for HTML5 Tags -->
+        <!--[if lt IE 9]>
+            <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <link href="{{STATIC_URL}}mw_cms/js/jquery-treeview/jquery.treeview.css" rel="stylesheet" type="text/css"/>
+        <link href="{{STATIC_URL}}mw_cms/stylesheets/base.css" rel="stylesheet" type="text/css" />
+        
+        <script src="{{STATIC_URL}}mw_cms/js/jquery-1.3.2.min.js" type="text/javascript" charset="utf-8"></script> 
+        <script src="{{STATIC_URL}}mw_cms/js/jquery-treeview/lib/jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+        <script src="{{STATIC_URL}}mw_cms/js/jquery-treeview/jquery.treeview.min.js" type="text/javascript" charset="utf-8"></script>
+        <script type="text/javascript">
+          $(document).ready(function(){
+            $(".treeview").treeview({
+                animated: "fast",
+                collapsed: true,
+                persist:"location"
+            });
+            
+          });
+        </script>
+    </head>
+    <body>
+<div class="container">
+    <header class="row">
+        <div class="shell">
+            <div class="twelve columns">
+                <h1 id="titolo">{% block intestazione %}Name{% endblock intestazione %}</h1>
+                <div id="topnav">
+                    {% if user.is_authenticated %}
+                    <span class="strip_benvenuto">Welcome {%if user.first_name%}{{user.first_name}}{% else %}{{user.username}}{%endif%}. {% if user.is_staff %}<a href="{% url admin:index %}">Control Panel</a> | <a href="{% url admin:logout %}">Logout</a>{% endif %}
+                    {% else %}
+                    <a href="{% url admin:index %}">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+    <div id="content" class="row">
+        <div class="shell">
+            <div class="three columns">
+                        <div id="navigation">
+
+                            <h3 class="titolo-menu">Menù</h3>
+                            {% full_tree_for_model treepages.Page as pagine %}
+                            {% for voceMenu,structure in pagine|tree_info %}
+                            
+                                {% if voceMenu.is_root_node and voceMenu.active and voceMenu.in_navigation %}
+                                    <ul style="background-color:#{{ voceMenu.get_RGB_color }};border-color:#{{ voceMenu.get_RGB_color }};" class="treeview-gray treeview">
+                                    {% with voceMenu.get_descendant_count as descendant_count %}
+                                        {% if forloop.last %}
+                                            <li class="last{% ifnotequal descendant_count 0 %}Expandable expandable{% endifnotequal %}">
+                                        {% else %}
+                                            <li class="{% ifnotequal descendant_count 0 %}expandable{% endifnotequal %}">
+                                        {% endif %}
+                                    {% endwith %}
+                                    
+                                    {% ifequal voceMenu page %}
+                                        <a href="{{voceMenu.get_absolute_url}}" title="{{voceMenu.title}}" class="voce-menu selezionato">{{voceMenu.title}}</a>
+                                    {% else %}
+                                        <a href="{{voceMenu.get_absolute_url}}" title="{{voceMenu.title}}" class="voce-menu">{{voceMenu.title}}</a>
+                                    {% endifequal %}
+                                    
+                                    {% navigation_descendant_tree_for_model treepages.Page voceMenu.id as childList %}
+                                    {% for childVoceMenu,childStructure in childList|tree_info %}
+                                    
+                                        {% if childStructure.new_level %}<ul style="background-color:transparent;" class="tree-descendants"><li>{% else %}</li><li>{% endif %}
+                                        
+                                        {% ifequal childVoceMenu page %}
+                                            <a href="{{childVoceMenu.get_absolute_url}}" title="{{childVoceMenu.title}}" class="voce-menu selezionato">{{childVoceMenu.title}}</a>
+                                        {% else %}
+                                            <a href="{{childVoceMenu.get_absolute_url}}" title="{{childVoceMenu.title}}" class="voce-menu">{{childVoceMenu.title}}</a>
+                                        {% endifequal %}
+                                        {% for level in childStructure.closed_levels %}</li></ul>{% endfor %}
+                                    {% empty %}
+                                        </li></ul>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            
+                            {% endfor %}
+                            
+                            
+                        </div>
+            </div>
+            <div class="nine columns">
+                         <h2 class="titolo">{% block title %}{% endblock title %}</h2>
+                
+                        {% block body %}{% endblock body %}
+            </div>
+        </div>
+    </div>
+    <footer class="row">
+        <div class="shell">
+            <div class="twelve columns">
+                <p>Name. Address. P.IVA.</p><p>Phones, fax</p>
+            </div>
+        </div>
+    </footer>
+</div>
+{% analytics %}
+    </body>
+</html>
